@@ -49,4 +49,14 @@ class Stream
       end
     end
   end
+
+  def map &block
+    Stream.new(block.call(self.head)) do
+      if self.rest.nil?
+        nil
+      else
+        self.rest.map(&block)
+      end
+    end
+  end
 end

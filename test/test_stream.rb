@@ -26,11 +26,16 @@ class TestStream < Minitest::Test
   end
 
   def test_stream_append
+    appended = @one_two.append(Stream.new(3){})
+
     expected = Stream.new(1){ Stream.new(2){ Stream.new(3){} } }
-    assert_equal expected.take(3), @one_two.append(Stream.new(3){}).take(3)
+
+    assert_equal expected.take(3), appended.take(3)
   end
 
   def test_stream_interleave
+    a_b = Stream.new("a") { Stream.new ("b") {} }
+
     expected = Stream.new(1) {
       Stream.new("a") {
         Stream.new(2) {
@@ -38,7 +43,17 @@ class TestStream < Minitest::Test
         }
       }
     }
-    a_b = Stream.new("a") { Stream.new ("b") {} }
+
     assert_equal expected.take(4), @one_two.interleave(a_b).take(4)
+  end
+
+  def test_stream_map
+    two_three = @one_two.map {|x| x + 1 }
+    expected = Stream.new(2){ Stream.new(3){ } }
+    assert_equal expected.take(2), two_three.take(2)
+
+    to_append = Stream.new(3) {}
+    expected = expected.append(to_append)
+    assert_equal expected.take(3), two_three.append(to_append).take(3)
   end
 end
