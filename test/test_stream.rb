@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require './stream'
+require 'stream'
 
 class TestStream < Minitest::Test
   def setup
@@ -31,12 +31,12 @@ class TestStream < Minitest::Test
   end
 
   def test_stream_interleave
-    expected = Stream.new(1) { 
-      Stream.new("a") { 
-        Stream.new(2) { 
+    expected = Stream.new(1) {
+      Stream.new("a") {
+        Stream.new(2) {
           Stream.new ("b") {}
-        } 
-      } 
+        }
+      }
     }
     a_b = Stream.new("a") { Stream.new ("b") {} }
     assert_equal expected.take(4), @one_two.interleave(a_b).take(4)
