@@ -5,25 +5,22 @@ class Stream
     @calc = calc
   end
 
+  EMPTY_STREAM = Stream.new(nil){ nil }
+
   def rest
     @calc.call
   end
 
   def empty?
-    head.nil?
+    self == Stream::EMPTY_STREAM
   end
 
   def take n
-    s = self
-    res = []
-    n.times do
-      res << s.head
-      s = s.rest
-      unless s.is_a? Stream # If the stream ends before n elems, stop
-        break
-      end
+    if self.empty? || n == 0
+      []
+    else
+       [self.head] + self.rest.take(n-1)
     end
-    res
   end
 
   def append other
@@ -42,7 +39,7 @@ class Stream
 
   def interleave other
     Stream.new(self.head) do
-      if self.rest.nil?
+      if self.empty?
         other
       else
         other.interleave self.rest.interleave(other)
@@ -52,8 +49,8 @@ class Stream
 
   def map &block
     Stream.new(block.call(self.head)) do
-      if self.rest.nil?
-        nil
+      if self.rest.empty?
+        EMPTY_STREAM
       else
         self.rest.map(&block)
       end
