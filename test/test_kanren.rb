@@ -27,7 +27,21 @@ class TestKanren < Minitest::Test
   end
 
   def test_disjunction_aka_or
-    skip
+    a = Stream.new(1) { Stream.new(2) { Stream::EMPTY } }
+    b = Stream.new(5) { Stream.new(7) { Stream::EMPTY } }
+
+    results = Stream.new(1) {
+      Stream.new(2) {
+        Stream.new(5) {
+          Stream.new(7) {
+            Stream::EMPTY
+          }
+        }
+      }
+    }
+
+    assert_equal results.all, Kanren.disj(a, b).all
+    assert_equal results.all.sort, Kanren.disj(b, a).all.sort
   end
 
   def test_conjunction_aka_and

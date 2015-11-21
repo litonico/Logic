@@ -13,6 +13,7 @@ class Kanren
   def self.unify
   end
 
-  def self.disj
+  def self.disj *streams
+    streams.reduce(Stream::EMPTY) { |so_far, stream| so_far.append stream }
   end
 end
