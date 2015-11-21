@@ -5,14 +5,22 @@ class Stream
     @calc = calc
   end
 
-  EMPTY_STREAM = Stream.new(nil){ nil }
+  EMPTY = Stream.new(nil){ nil }
 
   def rest
     @calc.call
   end
 
   def empty?
-    self == Stream::EMPTY_STREAM
+    self == Stream::EMPTY
+  end
+
+  def all
+    if self.empty?
+      []
+    else
+       [self.head] + self.rest.all
+    end
   end
 
   def take n
@@ -28,11 +36,7 @@ class Stream
       other
     else
       Stream.new(self.head) do
-        if self.rest.nil?
-          other
-        else
-          self.rest.append other
-        end
+        self.rest.append other
       end
     end
   end
@@ -50,10 +54,11 @@ class Stream
   def map &block
     Stream.new(block.call(self.head)) do
       if self.rest.empty?
-        EMPTY_STREAM
+        EMPTY
       else
         self.rest.map(&block)
       end
     end
   end
+  
 end

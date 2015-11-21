@@ -2,7 +2,7 @@ require 'minitest/autorun'
 require 'minitest/focus'
 require 'stream'
 
-FIN = Stream::EMPTY_STREAM
+FIN = Stream::EMPTY
 
 class TestStream < Minitest::Test
   def setup
@@ -60,5 +60,9 @@ class TestStream < Minitest::Test
     to_append = Stream.new(3) { FIN }
     expected = expected.append(to_append)
     assert_equal expected.take(3), two_three.append(to_append).take(3)
+  end
+
+  def test_stream_all
+    assert_equal [1,2], @one_two.all
   end
 end
